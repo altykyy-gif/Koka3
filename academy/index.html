@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#123e3c">
+  <meta name="description" content="منظومة تعليمية تفاعلية لشرح بحث ومشروع رفيق السكري والتحضير للمناقشة">
+  <title>مدرسة رفيق السكري | منصة فهم ومناقشة</title>
+  <link rel="stylesheet" href="academy.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar" aria-label="أبواب المنهج">
+      <a class="brand" id="homeButton" href="#home" aria-label="العودة إلى لوحة التعلم">
+        <span class="brand-mark" aria-hidden="true">ر</span>
+        <span><strong>مدرسة رفيق</strong><small>مسار المناقشة العلمية</small></span>
+      </a>
+      <div class="side-progress">
+        <div class="progress-head"><span>تقدمك في المنهج</span><b id="progressPercent">0٪</b></div>
+        <div class="progress-track"><i id="progressBar"></i></div>
+        <small id="progressCount">0 من 13 وحدة</small>
+      </div>
+      <nav id="courseNav" class="course-nav" aria-label="اختيار وحدة التعلم"></nav>
+      <div class="side-footer">
+        <div class="mini-avatar"><img src="assets/yahya-altighi.jpg" alt="صورة يحيى التيغي مطور المنظومة التعليمية"></div>
+        <div><b>تطوير المنظومة التعليمية</b><small>يحيى التيغي</small></div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <button class="icon-button menu-button" id="menuButton" type="button" aria-label="فتح قائمة المنهج" aria-expanded="false">☰</button>
+        <div class="crumb"><span>مسار المناقشة</span><b>/</b><strong id="crumbTitle">الرئيسية</strong></div>
+        <div class="tools" role="toolbar" aria-label="أدوات القراءة">
+          <button class="tool-button" id="reviewButton" type="button" title="بطاقات المراجعة" aria-label="فتح بطاقات المراجعة">↻ <span>مراجعة</span></button>
+          <button class="tool-button" id="searchButton" type="button" title="بحث">⌕ <span>بحث</span></button>
+          <button class="icon-button" id="fontDown" type="button" title="تصغير الخط" aria-label="تصغير الخط">أ−</button>
+          <button class="icon-button" id="fontUp" type="button" title="تكبير الخط" aria-label="تكبير الخط">أ+</button>
+          <button class="icon-button" id="readButton" type="button" title="قراءة الدرس صوتيًا" aria-label="قراءة الدرس صوتيًا">◖))</button>
+          <button class="icon-button" id="themeButton" type="button" title="تبديل الوضع الليلي" aria-label="تبديل الوضع الليلي">☾</button>
+        </div>
+      </header>
+
+      <div class="content-wrap">
+        <section id="homeView" class="home-view" aria-labelledby="heroTitle">
+          <div class="hero">
+            <div class="hero-copy">
+              <div class="eyebrow"><span class="live-dot"></span> مقرر تفاعلي للتحضير للمناقشة</div>
+              <h1 id="heroTitle">افهمي الفكرة.<br><em>ثم دافعي عنها بثقة.</em></h1>
+              <p>دروس قصيرة، أمثلة من البحث والشفرة، وأسئلة لجنة متدرجة. ادرسي كل باب على حدة، واختبري فهمك، وسيُحفظ تقدمك على هذا الجهاز.</p>
+              <button class="primary-button" id="continueButton" type="button">ابدئي من الوحدة الأولى <span aria-hidden="true">←</span></button>
+              <div class="hero-note"><span>✓</span> يعمل محليًا بعد فتح ملفات المنظومة، ولا يحتاج تسجيل دخول.</div>
+            </div>
+            <div class="hero-art" aria-label="رسم يوضح رحلة التعلم من البحث إلى المناقشة">
+              <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div>
+              <div class="orb-label label-top">فهم</div><div class="orb-label label-side">دليل</div><div class="orb-label label-bottom">دفاع</div>
+              <div class="core-mark"><span>ر</span><small>52</small></div>
+              <svg class="hero-lines" viewBox="0 0 380 320" aria-hidden="true"><path d="M68 75 C150 10 245 44 298 94 M298 94 C354 178 295 255 235 269 M235 269 C155 320 71 232 68 75"/><circle cx="68" cy="75" r="7"/><circle cx="298" cy="94" r="7"/><circle cx="235" cy="269" r="7"/></svg>
+              <div class="hero-caption">من فهم البحث<br>إلى إجابة واثقة</div>
+            </div>
+          </div>
+
+          <div class="home-grid">
+            <section class="home-card identity-card" aria-labelledby="identityTitle">
+              <div class="section-kicker">بطاقة البحث</div><h2 id="identityTitle">هوية المشروع</h2>
+              <p class="research-title">تصميم وتطوير موقع «رفيق السكري» لدعم المتابعة الذاتية لمرضى السكري</p>
+              <div class="logos-row">
+                <figure><img src="assets/logo-1.jpg" alt="شعار جامعة بنغازي"><figcaption>جامعة بنغازي</figcaption></figure>
+                <figure><img src="assets/logo-2.jpg" alt="شعار كلية الآداب والعلوم"><figcaption>كلية الآداب والعلوم – سلوق</figcaption></figure>
+              </div>
+              <div class="students" id="studentList"></div>
+              <p class="supervisor-line">الإشراف الأكاديمي: <b>أ. حسن الفاخري</b><span>·</span> العام الجامعي 2026–2027</p>
+              <div class="verse-box"><span>آية الغلاف · سورة النجم 39</span><strong>﴿وَأَنْ لَيْسَ لِلْإِنسَانِ إِلَّا مَا سَعَىٰ﴾</strong><p>المعنى الإجمالي في سياق الآيات يبرز سعي الإنسان وعمله ومسؤوليته عنه. وردت في الغلاف استشهادًا بقيمة الجهد، وليست دليلًا تقنيًا أو نتيجة للبحث.</p></div>
+            </section>
+            <section class="home-card start-card" aria-labelledby="startTitle">
+              <div class="section-kicker">مسار مذاكرة موجّه</div><h2 id="startTitle">كيف تستخدمن المنظومة؟</h2>
+              <ol class="start-steps">
+                <li><b>اقرئي الشرح</b><span>ابدئي بالمعنى المبسط ثم اربطيه بنص البحث الأصلي.</span></li>
+                <li><b>اختبري الاسترجاع</b><span>أجيبي قبل فتح إجابة سؤال المناقشة.</span></li>
+                <li><b>راجعي الأخطاء</b><span>استخدمي البطاقات والمصطلحات، ثم أعيدي الاختبار.</span></li>
+              </ol>
+              <div class="learning-progress"><div><strong id="homePercent">0٪</strong><span>من المنهج مكتمل</span></div><div class="circle-progress" id="circleProgress"><span id="homeDone">0/13</span></div></div>
+              <button class="secondary-button" id="examStartButton" type="button">ابدئي اختبارًا تجريبيًا</button>
+            </section>
+          </div>
+
+          <section class="module-strip" aria-labelledby="moduleStripTitle"><div><div class="section-kicker">رحلة الفصول</div><h2 id="moduleStripTitle">الأبواب مرتبة لتبني الفهم خطوة خطوة</h2></div><div id="moduleCards" class="module-cards"></div></section>
+          <section class="important-note"><b>حدود علمية لا تنسيها في المناقشة</b><p>الموقع ينظم بيانات متابعة أُدخلت يدويًا. لا يشخّص ولا يحدد جرعة علاج. اختبار الوظائف لا يثبت أثرًا صحيًا، ومختبر التنبؤ تجربة بحثية منفصلة لا تستخدم لاتخاذ قرار علاجي.</p></section>
+        </section>
+
+        <section id="moduleView" class="module-view" hidden aria-live="polite">
+          <div class="module-heading"><div><div class="eyebrow" id="moduleEyebrow"></div><h1 id="moduleTitle"></h1><p id="moduleSubtitle"></p></div><div class="module-actions"><button class="outline-button" id="bookmarkButton" type="button">☆ حفظ للمراجعة</button><button class="primary-button compact" id="completeButton" type="button">أنهيت هذه الوحدة</button></div></div>
+          <div class="module-meta" id="moduleMeta"></div>
+          <div class="lesson-layout"><article class="lesson-main" id="lessonMain"></article><aside class="lesson-aside"><section class="aside-card"><span class="aside-icon">✦</span><h3>هدف الوحدة</h3><ul id="goalList"></ul></section><section class="aside-card recall-card"><span class="aside-icon">↻</span><h3>استرجاع نشط</h3><p>أجيبي بصوتك قبل فتح السؤال، ثم قيمي ثقتك.</p><button class="text-button" id="jumpViva" type="button">اذهبي لأسئلة اللجنة ←</button></section><section class="aside-card"><h3>ملاحظة شخصية</h3><label for="moduleNote">ما النقطة التي تريدين مراجعتها؟</label><textarea id="moduleNote" rows="4" placeholder="اكتبي ملاحظة تحفظ على هذا الجهاز..."></textarea><small class="save-hint" id="noteStatus">يحفظ تلقائيًا محليًا</small></section><section class="aside-card source-link-card"><h3>الدليل الأصلي</h3><p>في الأسفل يمكنك فتح نص البحث وجداوله وأشكاله كما وردت في الملف المرفق.</p><button class="text-button" id="openSource" type="button">إظهار نص هذا الباب ←</button></section></aside></div>
+          <div class="module-footer"><button class="outline-button" id="prevModule" type="button">← الوحدة السابقة</button><button class="outline-button" id="nextModule" type="button">الوحدة التالية →</button></div>
+        </section>
+
+        <section id="examView" hidden class="exam-view" aria-labelledby="examTitle">
+          <div class="exam-intro"><div class="section-kicker">قياس الفهم لا الحفظ وحده</div><h1 id="examTitle">اختبار المناقشة</h1><p>اختاري المستوى. ستظهر الأسئلة من أبواب مختلفة. بعد الإنهاء تحصلين على الدرجة والإجابات مع تفسير مختصر.</p></div>
+          <div id="examChooser" class="exam-levels">
+            <button class="exam-level" data-level="quick"><span class="level-no">01</span><b>سريع</b><span>10 أسئلة · مراجعة مركزة</span><i>ابدئي الاختبار ←</i></button>
+            <button class="exam-level" data-level="medium"><span class="level-no">02</span><b>متوسط</b><span>25 سؤالًا · مناقشة متعددة المحاور</span><i>ابدئي الاختبار ←</i></button>
+            <button class="exam-level" data-level="full"><span class="level-no">03</span><b>شامل</b><span>50 سؤالًا · جميع أبواب المشروع</span><i>ابدئي الاختبار ←</i></button>
+          </div>
+          <div id="examRunner" hidden></div>
+          <div id="examResults" hidden></div>
+          <button class="text-button back-home" id="examBack" type="button">العودة إلى لوحة التعلم</button>
+        </section>
+
+        <section id="reviewView" hidden class="review-view" aria-labelledby="reviewTitle">
+          <div class="exam-intro"><div class="section-kicker">تذكّر قبل إعادة القراءة</div><h1 id="reviewTitle">بطاقات المراجعة</h1><p>استدعاء الإجابة من الذاكرة ثم مراجعتها يساعد على كشف ما يحتاج إلى تثبيت.</p></div>
+          <div class="review-tabs"><button class="active" data-review="practice">إجابات المناقشة</button><button data-review="glossary">المصطلحات</button><button data-review="bookmarks">المحفوظة</button></div>
+          <div id="reviewGrid" class="review-grid"></div>
+        </section>
+
+        <section id="sourceView" hidden class="source-view" aria-labelledby="sourceTitle">
+          <div class="module-heading"><div><div class="section-kicker">النص العلمي الأصلي</div><h1 id="sourceTitle">البحث كاملًا: نص وجداول وأشكال</h1><p>هذه المادة مستخرجة من مستند البحث المرفق. استخدميها إلى جانب الشرح، لا بدلًا منه.</p></div><button class="outline-button" id="sourceBack" type="button">العودة إلى الدرس</button></div>
+          <div class="source-tools"><label for="sourceFilter">اختيار الباب</label><select id="sourceFilter"></select><label for="sourceSearch">بحث داخل نص البحث</label><input id="sourceSearch" type="search" placeholder="مصطلح أو عبارة..."><span id="sourceCount"></span></div>
+          <div id="sourceBlocks" class="source-blocks"></div>
+        </section>
+        <section id="searchView" hidden class="search-view" aria-labelledby="searchTitle">
+          <div class="exam-intro"><div class="section-kicker">بحث محلي داخل الدروس والبحث</div><h1 id="searchTitle">ابحثي عن فكرة</h1><input id="globalSearch" class="search-input" type="search" placeholder="مثال: getAfter، فصل المشاركين، النسخة الاحتياطية"><div id="searchResults" class="search-results"></div></div>
+        </section>
+
+        <footer class="site-footer"><span>منظومة تعليمية مساعدة — الإصدار الدراسي الأول</span><span>المحتوى الأكاديمي من البحث المرفق · يعمل حفظ التقدم محليًا على هذا المتصفح</span></footer>
+      </div>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="data/course-content.js"></script>
+  <script src="data/exam-bank.js"></script>
+  <script src="data/research-content.js"></script>
+  <script src="data/project-sources.js"></script>
+  <script src="data/firestore-rules.js"></script>
+  <script src="academy.js"></script>
+</body>
+</html>
