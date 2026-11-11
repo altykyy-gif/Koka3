@@ -1,0 +1,91 @@
+{
+  "schema": 1,
+  "dataset": "https://doi.org/10.6084/m9.figshare.21600933.v5",
+  "reference": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9849330/",
+  "archive_sha256": "59b5f5c4053a32bb6b7827844a0191597dc82228fe88ce332a189fdfc659c4cb",
+  "window_minutes": 60,
+  "seed": 51,
+  "versions": {
+    "pandas": "2.2.3",
+    "numpy": "2.3.5",
+    "sklearn": "1.8.0"
+  },
+  "extraction": {
+    "sessions": 109,
+    "manual_readings": 3269,
+    "current_in_range": 2233,
+    "recent_previous_reading": 2118,
+    "complete_sensor_window": 2108
+  },
+  "train": {
+    "examples": 1720,
+    "participants": 57
+  },
+  "test": {
+    "examples": 388,
+    "participants": 20
+  },
+  "outcomes": {
+    "high": {
+      "train_events": 206,
+      "test_events": 70,
+      "train_participants_with_event": 39,
+      "test_participants_with_event": 11,
+      "training_rate_baseline": {
+        "brier": 0.151542,
+        "average_precision": 0.180412,
+        "auc": 0.5
+      },
+      "latest_reading_baseline": {
+        "brier": 0.144218,
+        "average_precision": 0.316131,
+        "auc": 0.686074
+      },
+      "model": {
+        "brier": 0.138866,
+        "average_precision": 0.338917,
+        "auc": 0.700854
+      },
+      "participant_bootstrap": {
+        "replicates": 1000,
+        "auc_95": [
+          0.618094,
+          0.871046
+        ],
+        "auc_gain_vs_latest_95": [
+          -0.064768,
+          0.191184
+        ]
+      },
+      "parameters": {
+        "features": [
+          "current",
+          "change",
+          "log_gap"
+        ],
+        "means": [
+          129.44406976744187,
+          -15.510348837209301,
+          5.336586376487962
+        ],
+        "scales": [
+          26.789883324741677,
+          47.58954433602901,
+          0.6602221376415923
+        ],
+        "weights": [
+          0.495407075595868,
+          0.09414683419919072,
+          0.4052933549598581
+        ],
+        "intercept": -2.1456027595007634
+      }
+    },
+    "low": {
+      "train_events": 64,
+      "test_events": 12,
+      "train_participants_with_event": 18,
+      "test_participants_with_event": 6
+    }
+  }
+}
