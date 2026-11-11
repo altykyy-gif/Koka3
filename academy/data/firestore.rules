@@ -1,0 +1,192 @@
+rules_version = '2';
+service cloud.firestore {
+match /databases/{database}/documents {
+
+// ---------- دوال مساعدة ----------  
+function signedIn() { return request.auth != null; }  
+// يعيّن المشرف الصلاحية من وحدة تحكم Firebase.  
+function approvedDoctor(uid) {  
+  let role = /databases/$(database)/documents/doctors/$(uid);  
+  return exists(role) && get(role).data.get('active', false) == true;  
+}  
+function isDoctorAccount() {  
+  return signedIn()  
+    && request.auth.token.firebase.sign_in_provider == 'password'  
+    && approvedDoctor(request.auth.uid);  
+}  
+function isSupervisorAccount() {  
+  let role = /databases/$(database)/documents/supervisors/$(request.auth.uid);  
+  return signedIn()  
+    && request.auth.token.firebase.sign_in_provider == 'password'  
+    && exists(role) && get(role).data.get('active', false) == true;  
+}  
+// اعتماد المشرفين يبقى من وحدة تحكم Firebase.  
+match /supervisors/{uid} {  
+  allow get: if signedIn() && request.auth.uid == uid;  
+  allow list, write: if false;  
+}  
+match /doctors/{uid} {  
+  allow get: if signedIn() && (request.auth.uid == uid || isSupervisorAccount());  
+  allow list: if isSupervisorAccount()  
+              && request.query.limit != null && request.query.limit <= 31;  
+  allow create: if isSupervisorAccount()  
+                && request.resource.data.keys().hasOnly(['active'])  
+                && request.resource.data.get('active', false) == true;  
+  allow update: if isSupervisorAccount()  
+                && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['active'])  
+                && request.resource.data.active is bool;  
+  allow delete: if false;  
+}  
+function patientDoc(pid) {  
+  return get(/databases/$(database)/documents/patients/$(pid)).data;  
+}  
+function isDoctorOf(pid) {  
+  return signedIn() && patientDoc(pid).doctorId == request.auth.uid && isDoctorAccount();  
+}  
+function isPatientOf(pid) {  
+  return signedIn() && patientDoc(pid).get('patientUid', null) == request.auth.uid;  
+}  
+
+// قراءة سكر صالحة (الحدود نفسها التي يقبلها التطبيق: 20 إلى 700)  
+function validReading() {  
+  let d = request.resource.data;  
+  return d.keys().hasOnly(['v','w','c','t','d','ts','by'])  
+    && d.keys().hasAll(['v','w','c','ts'])  
+    && d.v is number && d.v >= 20 && d.v <= 700  
+    && d.w in ['f','a']  
+    && d.c in ['ok','warn','bad']  
+    && d.ts is int && d.ts > 0 && d.ts <= 8640000000000000  
+    && (!('t' in d) || (d.t is string && d.t.size() <= 50))  
+    && (!('d' in d) || (d.d is string && d.d.size() <= 50))  
+    && (!('by' in d) || d.by == 'doctor');  
+}  
+
+// حدث صالح: وجبة أو نشاط أو أخذ دواء  
+function validEvent() {  
+  let d = request.resource.data;  
+  return d.keys().hasOnly(['k','n','q','m','day','t','ts','mid','dn'])  
+    && d.keys().hasAll(['k','day','ts'])  
+    && d.k in ['m','a','taken']  
+    && d.ts is int && d.ts > 0 && d.ts <= 8640000000000000  
+    && d.day is string && d.day.size() <= 20  
+    && (!('n' in d)   || (d.n is string   && d.n.size()   <= 100))  
+    && (!('q' in d)   || (d.q is string   && d.q.size()   <= 100))  
+    && (!('t' in d)   || (d.t is string   && d.t.size()   <= 50))  
+    && (!('mid' in d) || (d.mid is string && d.mid.size() <= 50))  
+    && (!('dn' in d)  || (d.dn is string  && d.dn.size()  <= 100))  
+    && (!('m' in d)   || d.m is number);  
+}  
+
+// ---------- المرضى ----------  
+match /patients/{pid} {  
+
+  // الطبيب فقط ينشئ مريضاً، ولا يُنشأ مربوطاً مسبقاً بأي حساب  
+  allow create: if isDoctorAccount()  
+                && request.resource.data.keys().hasOnly(['name','doctorId','createdAt'])  
+                && request.resource.data.doctorId == request.auth.uid  
+                && request.resource.data.name is string  
+                && request.resource.data.name.size() > 0  
+                && request.resource.data.name.size() <= 100;  
+
+  allow read: if signedIn()  
+              && (resource.data.get('patientUid', null) == request.auth.uid  
+                  || (resource.data.doctorId == request.auth.uid && isDoctorAccount()));  
+
+  // الحذف للطبيب فقط (لا يستطيع المريض حذف ملفه عند الطبيب)  
+  allow delete: if isDoctorAccount() && resource.data.doctorId == request.auth.uid;  
+
+  allow update: if signedIn()  
+                && request.resource.data.doctorId == resource.data.doctorId  
+                && (  
+                  // 1) الطبيب: ملاحظة، رمز ربط، فك ربط. لا يعيّن patientUid ولا يعدّل الموافقة  
+                  (resource.data.doctorId == request.auth.uid && isDoctorAccount()  
+                    && (!('patientUid' in request.resource.data)  
+                        || request.resource.data.patientUid == resource.data.get('patientUid', null))  
+                    && request.resource.data.get('consent', null) == resource.data.get('consent', null))  
+
+                  // 2) ربط المريض: برمز صالح غير مستخدم يُستهلك في العملية نفسها  
+                  || (!('patientUid' in resource.data)  
+                      && 'linkCode' in resource.data  
+                      && request.resource.data.patientUid == request.auth.uid  
+                      && request.resource.data.diff(resource.data).affectedKeys()  
+                           hasOnly(['patientUid','consent','linkHistory'])  
+                      && request.resource.data.consent.accepted == true  
+                      && approvedDoctor(resource.data.doctorId)  
+                      && get(/databases/$(database)/documents/links/$(resource.data.linkCode)).data.pid == pid  
+                      && get(/databases/$(database)/documents/links/$(resource.data.linkCode)).data.doctorId == resource.data.doctorId  
+                      && get(/databases/$(database)/documents/links/$(resource.data.linkCode)).data.used == false  
+                      && get(/databases/$(database)/documents/links/$(resource.data.linkCode)).data.exp > request.time.toMillis()  
+                      && getAfter(/databases/$(database)/documents/links/$(resource.data.linkCode)).data.used == true)  
+
+                  // 3) المريض المرتبط: الأدوية فقط  
+                  || (resource.data.get('patientUid', null) == request.auth.uid  
+                      && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['meds'])  
+                      && request.resource.data.meds is list  
+                      && request.resource.data.meds.size() <= 30)  
+
+                  // 4) المريض المرتبط: الرد على الملاحظة فقط  
+                  || (resource.data.get('patientUid', null) == request.auth.uid  
+                      && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['patientReply'])  
+                      && request.resource.data.patientReply is map  
+                      && request.resource.data.patientReply.text is string  
+                      && request.resource.data.patientReply.text.size() <= 500)  
+
+                  // 5) المريض: فك الربط  
+                  || (resource.data.get('patientUid', null) == request.auth.uid  
+                      && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['patientUid','linkHistory'])  
+                      && !('patientUid' in request.resource.data))  
+                );  
+
+  match /readings/{rid} {  
+    allow read: if isDoctorOf(pid) || isPatientOf(pid);  
+
+    allow create: if (isPatientOf(pid) && validReading() && !('by' in request.resource.data))  
+                  || (isDoctorOf(pid) && validReading());  
+
+    // إعادة إرسال القراءة نفسها بعد انقطاع الشبكة مسموحة فقط إن لم يتغير شيء  
+    allow update: if isPatientOf(pid) && request.resource.data == resource.data;  
+
+    allow delete: if isDoctorOf(pid);  
+  }  
+
+  match /events/{eid} {  
+    allow read: if isDoctorOf(pid) || isPatientOf(pid);  
+    allow create, update: if isPatientOf(pid) && validEvent();  
+    allow delete: if isDoctorOf(pid);  
+  }  
+}  
+
+// ---------- رموز الربط ----------  
+match /links/{code} {  
+  allow create: if isDoctorAccount()  
+                && request.resource.data.keys().hasOnly(['pid','doctorId','exp','used'])  
+                && request.resource.data.doctorId == request.auth.uid  
+                && request.resource.data.pid is string  
+                && request.resource.data.used == false  
+                && request.resource.data.exp is number  
+                && request.resource.data.exp <= request.time.toMillis() + 3 * 24 * 3600 * 1000  
+                && isDoctorOf(request.resource.data.pid);  
+
+  allow get: if signedIn()  
+             && resource.data.used == false  
+             && resource.data.exp > request.time.toMillis()  
+             && approvedDoctor(resource.data.doctorId);  
+
+  allow update: if signedIn()  
+             && resource.data.used == false  
+             && resource.data.exp > request.time.toMillis()  
+             && approvedDoctor(resource.data.doctorId)  
+             && request.resource.data.used == true  
+             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['used'])  
+             && request.resource.data.pid == resource.data.pid  
+             && request.resource.data.doctorId == resource.data.doctorId  
+             // لا يُستهلك الرمز منفرداً: يجب أن يرافقه ربط هذا الحساب بالمريض في العملية نفسها  
+             && !('patientUid' in get(/databases/$(database)/documents/patients/$(resource.data.pid)).data)  
+             && get(/databases/$(database)/documents/patients/$(resource.data.pid)).data.get('linkCode', null) == code  
+             && getAfter(/databases/$(database)/documents/patients/$(resource.data.pid)).data.get('patientUid', null) == request.auth.uid;  
+
+  allow delete: if isDoctorAccount() && resource.data.doctorId == request.auth.uid;  
+}
+
+}
+}
